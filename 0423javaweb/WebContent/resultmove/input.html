@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Request Page</title>
+</head>
+<body>
+	<!-- 서버에게 처리를 요청하는 방법 -->
+	<!-- 이렇게 전달하는 경우는 사용자의 입력을 받을 필요가 없는 경우 -->
+	<p><a href="process.jsp?n1=10&n2=20" >Request to Server</a></p>
+	
+	<form action="process.jsp">
+		Number 1<input type="text" name="n1" /><br />
+		Number 2<input type="text" name="n2" /><br />
+		<input type="submit" value="request to server" />
+	</form>
+</body>
+</html>
