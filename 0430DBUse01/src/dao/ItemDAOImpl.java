@@ -110,19 +110,106 @@ public class ItemDAOImpl implements ItemDAO {
 					+ "values(?,?,?,?)");
 			//?에 데이터를 바인딩
 			pstmt.setInt(1, item.getCode());
-			pstmt.setString(1, item.getTitle());
-			pstmt.setString(1, item.getCategory());
-			pstmt.setString(1, item.getDescription());
+			pstmt.setString(2, item.getTitle());
+			pstmt.setString(3, item.getCategory());
+			pstmt.setString(4, item.getDescription());
 			//실행
 			result = pstmt.executeUpdate();
 		}catch(Exception e) {
-			
+			System.out.println("데이터 삽입 예외:" + e.getMessage());
+			e.printStackTrace();
 		}finally {
 			try {
 				pstmt.close();
 			}catch(Exception e) {}
 		}
 		
+		return result;
+	}
+
+	//상세보기 처럼 하나의 데이터를 찾아오는 메소드는 리턴할 데이터를 null로 초기화하고
+	//리턴
+	@Override
+	public Item detailItem(int code) {
+		Item item = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			//code를 가지고 title, category, description을 수정
+			pstmt = con.prepareStatement(
+			//입력받은 파라미터를 SQL 문장에 바인
+					"select code, title, category, description from item where code =?");
+			pstmt.setInt(1,  code);
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				item = new Item();
+				item.setCode(rs.getInt("code"));
+				item.setTitle(rs.getString("title"));
+				item.setCategory(rs.getString("category"));
+				item.setDescription(rs.getString("description"));
+			}
+		}catch(Exception e) {
+			System.out.println("상세보기 예외:" + e.getMessage());
+			e.printStackTrace();
+		}finally {
+			try {
+				rs.close();
+				pstmt.close();
+			}catch (Exception e) {}
+		}
+		
+		return item;
+	}
+
+	@Override
+	public int updateItem(Item item) {
+		int result = -1;
+		
+		PreparedStatement pstmt = null;
+
+		try {
+			//code를 가지고 title, category, description을 수정
+			pstmt = con.prepareStatement(
+					"update item set title=?, category=?, description=? "
+					+ "where code = ?");
+			//입력받은 파라미터를 SQL 문장에 바인딩
+			pstmt.setString(1, item.getTitle());
+			pstmt.setString(2, item.getCategory());
+			pstmt.setString(3, item.getDescription());
+			pstmt.setInt(4, item.getCode());
+			//SQL을 실행
+			
+			result = pstmt.executeUpdate();
+			
+		}catch(Exception e) {
+			System.out.println("데이터 수정 예외:" + e.getMessage());
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			}catch(Exception e) {}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public int deleteItem(int code) {
+		int result = -1;
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = con.prepareStatement(
+					"delete from item where code = ?");
+			pstmt.setInt(1,  code);
+			result = pstmt.executeUpdate();
+		}catch(Exception e) {
+			System.out.println("데이터 삭제 예외:" + e.getMessage());
+			e.printStackTrace();
+		}finally {
+			try {
+				pstmt.close();
+			}catch(Exception e) {}
+		}
 		return result;
 	}
 
